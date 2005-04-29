@@ -85,10 +85,47 @@ mv ${tmpdir}/snowball/dist/libstemmer_c.tgz ${tmpdir}/website/dist/
 mv ${tmpdir}/snowball/dist/libstemmer_java.tgz ${tmpdir}/website/dist/
 
 # Update mail archives
-# HM_LINKQUOTES=1 HM_REVERSE=1 HM_MONTHLY_INDEX=1 /home/richard/software/hypermail-2.1.3/src/hypermail -m /usr/data/mailman/archives/private/snowball-discuss.mbox/snowball-discuss.mbox -d archives/snowball-discuss -l "Snowball Discuss"
-# HM_LINKQUOTES=1 HM_REVERSE=1 HM_MONTHLY_INDEX=1 /home/richard/software/hypermail-2.1.3/src/hypermail -m /usr/data/mailman/archives/private/snowball-commits.mbox/snowball-commits.mbox -d archives/snowball-commits -l "Snowball Commits"
+HM_LINKQUOTES=1 HM_REVERSE=1 HM_MONTHLY_INDEX=1 /home/richard/software/hypermail-2.1.3/src/hypermail -m /usr/data/mailman/archives/private/snowball-discuss.mbox/snowball-discuss.mbox -d archives/snowball-discuss -l "Snowball Discuss"
+HM_LINKQUOTES=1 HM_REVERSE=1 HM_MONTHLY_INDEX=1 /home/richard/software/hypermail-2.1.3/src/hypermail -m /usr/data/mailman/archives/private/snowball-commits.mbox/snowball-commits.mbox -d archives/snowball-commits -l "Snowball Commits"
 
 rsync -q -a -r --delete --delete-after ${tmpdir}/website/ ${htmldir_local}
+
+# Update search indices
+dbprefix="/home/richard/pub/omega/data/snowball-";
+
+# We build into a new database, and then remove the old one and move the new
+# one into place.  It would be better to use a symlink, but I can't be
+# bothered to deal with timestamped directories, and cleaning up carefully, etc.
+
+db="discuss";
+mkdir ${dbprefix}${db}-new;
+${omindex} --db ${dbprefix}${db}-new \
+        --url http://www.snowball.tartarus.org/archives/snowball-${db}/ \
+        --mime-type txt:x-unhandled \
+        ${htmldir_local}/archives/snowball-${db}/ >/dev/null
+mv "${dbprefix}${db}" "${dbprefix}${db}-old";
+mv "${dbprefix}${db}-new" "${dbprefix}${db}";
+rm -rf "${dbprefix}${db}-old";
+
+db="commits";
+mkdir ${dbprefix}${db}-new;
+${omindex} --db ${dbprefix}${db}-new \
+        --url http://www.snowball.tartarus.org/archives/snowball-${db}/ \
+        --mime-type txt:x-unhandled \
+        ${htmldir_local}/archives/snowball-${db}/ >/dev/null
+mv "${dbprefix}${db}" "${dbprefix}${db}-old";
+mv "${dbprefix}${db}-new" "${dbprefix}${db}";
+rm -rf "${dbprefix}${db}-old";
+
+db="website";
+mkdir ${dbprefix}${db}-new;
+${omindex} --db ${dbprefix}${db}-new \
+        --url http://snowball.tartarus.org/ \
+        --mime-type txt:x-unhandled \
+        /home/www/snowball.tartarus.org/ >/dev/null
+mv "${dbprefix}${db}" "${dbprefix}${db}-old";
+mv "${dbprefix}${db}-new" "${dbprefix}${db}";
+rm -rf "${dbprefix}${db}-old";
 
 trap EXIT
 rm -rf ${tmpdir}
