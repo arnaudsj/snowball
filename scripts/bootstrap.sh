@@ -3,7 +3,7 @@
 # script which makes the website.
 
 tmpdir="/tmp/snowball_bootstrap$$"
-trap "(rm -rf $tmpdir;echo \"make_website.sh failed\")" EXIT
+trap "(rm -rf $tmpdir;echo \"bootstrap.sh failed\")" EXIT
 
 svnbase="svn://snowball.tartarus.org/snowball/trunk/"
 
@@ -16,7 +16,7 @@ cd ${tmpdir}
 svn export -q ${svnbase}
 cd trunk
 
-./scripts/make_website.sh
+/s1/snowball-svn/snowball/hooks/make_website.sh
 
 trap EXIT
 rm -rf ${tmpdir}

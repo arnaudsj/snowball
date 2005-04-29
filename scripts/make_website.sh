@@ -7,6 +7,8 @@
 # Directory to place the built website into.
 htmldir_local="/home/www/snowball.tartarus.org/"
 
+omindex="/u1/james/install/bin/omindex"
+
 tmpdir="/tmp/snowball_mkwebsite$$"
 trap "(rm -rf $tmpdir;echo \"make_website.sh failed\")" EXIT
 
@@ -20,12 +22,15 @@ cp -a website ${tmpdir}
 find ${tmpdir} -name .svn | xargs rm -rf
 
 cd ${tmpdir}/snowball
-make dist >/dev/null
+make all dist >/dev/null 2>/dev/null
 cd -
 
 cd snowball/algorithms
 langs=`find * -type d -maxdepth 0 -not -name .svn`
 cd -
+
+# Get the compiled stemmer, for use by the demo.
+cp ${tmpdir}/snowball/stemwords /s1/snowball-svn/pub/compiled/
 
 # Build the website, excluding the data files.
 for lang in $langs
@@ -85,8 +90,14 @@ mv ${tmpdir}/snowball/dist/libstemmer_c.tgz ${tmpdir}/website/dist/
 mv ${tmpdir}/snowball/dist/libstemmer_java.tgz ${tmpdir}/website/dist/
 
 # Update mail archives
-HM_LINKQUOTES=1 HM_REVERSE=1 HM_MONTHLY_INDEX=1 /home/richard/software/hypermail-2.1.3/src/hypermail -m /usr/data/mailman/archives/private/snowball-discuss.mbox/snowball-discuss.mbox -d archives/snowball-discuss -l "Snowball Discuss"
-HM_LINKQUOTES=1 HM_REVERSE=1 HM_MONTHLY_INDEX=1 /home/richard/software/hypermail-2.1.3/src/hypermail -m /usr/data/mailman/archives/private/snowball-commits.mbox/snowball-commits.mbox -d archives/snowball-commits -l "Snowball Commits"
+cd ~/archives
+mkdir -p archives
+HM_LINKQUOTES=1 HM_REVERSE=1 HM_MONTHLY_INDEX=1 /home/richard/pub/builds/hypermail -m /usr/data/mailman/archives/private/snowball-discuss.mbox/snowball-discuss.mbox -d archives/snowball-discuss -l "Snowball Discuss"
+HM_LINKQUOTES=1 HM_REVERSE=1 HM_MONTHLY_INDEX=1 /home/richard/pub/builds/hypermail -m /usr/data/mailman/archives/private/snowball-commits.mbox/snowball-commits.mbox -d archives/snowball-commits -l "Snowball Commits"
+cp -r archives/* ${tmpdir}/website/archives
+cd -
+
+cp -a /s1/snowball-svn/pub/compiled/omega.cgi ${tmpdir}/website/omega.cgi
 
 rsync -q -a -r --delete --delete-after ${tmpdir}/website/ ${htmldir_local}
 
@@ -98,32 +109,32 @@ dbprefix="/home/richard/pub/omega/data/snowball-";
 # bothered to deal with timestamped directories, and cleaning up carefully, etc.
 
 db="discuss";
-mkdir ${dbprefix}${db}-new;
+mkdir -p ${dbprefix}${db}-new;
 ${omindex} --db ${dbprefix}${db}-new \
         --url http://www.snowball.tartarus.org/archives/snowball-${db}/ \
         --mime-type txt:x-unhandled \
         ${htmldir_local}/archives/snowball-${db}/ >/dev/null
-mv "${dbprefix}${db}" "${dbprefix}${db}-old";
+mv "${dbprefix}${db}" "${dbprefix}${db}-old" || /bin/true;
 mv "${dbprefix}${db}-new" "${dbprefix}${db}";
 rm -rf "${dbprefix}${db}-old";
 
 db="commits";
-mkdir ${dbprefix}${db}-new;
+mkdir -p ${dbprefix}${db}-new;
 ${omindex} --db ${dbprefix}${db}-new \
         --url http://www.snowball.tartarus.org/archives/snowball-${db}/ \
         --mime-type txt:x-unhandled \
         ${htmldir_local}/archives/snowball-${db}/ >/dev/null
-mv "${dbprefix}${db}" "${dbprefix}${db}-old";
+mv "${dbprefix}${db}" "${dbprefix}${db}-old" || /bin/true;
 mv "${dbprefix}${db}-new" "${dbprefix}${db}";
 rm -rf "${dbprefix}${db}-old";
 
 db="website";
-mkdir ${dbprefix}${db}-new;
+mkdir -p ${dbprefix}${db}-new;
 ${omindex} --db ${dbprefix}${db}-new \
         --url http://snowball.tartarus.org/ \
         --mime-type txt:x-unhandled \
         /home/www/snowball.tartarus.org/ >/dev/null
-mv "${dbprefix}${db}" "${dbprefix}${db}-old";
+mv "${dbprefix}${db}" "${dbprefix}${db}-old" || /bin/true;
 mv "${dbprefix}${db}-new" "${dbprefix}${db}";
 rm -rf "${dbprefix}${db}-old";
 
