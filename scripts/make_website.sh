@@ -6,12 +6,9 @@
 
 # Directory to place the built website into.
 htmldir_local="/home/www/snowball.tartarus.org/"
-htmldir_local="/home/richard/snowballweb/"
 
 tmpdir="/tmp/snowball_mkwebsite$$"
 trap "(rm -rf $tmpdir;echo \"make_website.sh failed\")" EXIT
-tmpdir=`pwd`/newsite
-trap EXIT
 
 rm -rf ${tmpdir}
 mkdir -p ${tmpdir}
