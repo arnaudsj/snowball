@@ -35,9 +35,9 @@ cp ${tmpdir}/snowball/stemwords /s1/snowball-svn/pub/compiled/
 # Build the website, excluding the data files.
 for lang in $langs
 do
-  cp -a ${tmpdir}/snowball/algorithms/${lang}/stem.sbl ${tmpdir}/website/algorithms/${lang}/stem.sbl
-  cp -a ${tmpdir}/snowball/src_c/stem_${lang}.c        ${tmpdir}/website/algorithms/${lang}/stem.c
-  cp -a ${tmpdir}/snowball/src_c/stem_${lang}.h        ${tmpdir}/website/algorithms/${lang}/stem.h
+  cp -a ${tmpdir}/snowball/algorithms/${lang}/stem*.sbl ${tmpdir}/website/algorithms/${lang}/
+  cp -a ${tmpdir}/snowball/src_c/stem_${lang}.c         ${tmpdir}/website/algorithms/${lang}/stem.c
+  cp -a ${tmpdir}/snowball/src_c/stem_${lang}.h         ${tmpdir}/website/algorithms/${lang}/stem.h
 done
 
 # Build a tarball of the whole website, together with the code,
