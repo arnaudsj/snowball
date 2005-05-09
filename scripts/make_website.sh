@@ -89,6 +89,10 @@ mv ${tmpdir}/snowball/dist/snowball_code.tgz ${tmpdir}/website/dist/
 mv ${tmpdir}/snowball/dist/libstemmer_c.tgz ${tmpdir}/website/dist/
 mv ${tmpdir}/snowball/dist/libstemmer_java.tgz ${tmpdir}/website/dist/
 
+# Add link to viewcvs wrapper.
+rm -f ${tmpdir}/website/viewcvs.cgi
+ln -s /s1/anonsvn/pub/viewcvs-userv-wrapper ${tmpdir}/website/viewcvs.cgi
+
 # Update mail archives
 cd ~/archives
 mkdir -p archives
