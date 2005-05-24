@@ -50,10 +50,15 @@ cp ${tmpdir}/snowball/stemwords /s1/snowball-svn/pub/compiled/
 for lang in $langs
 do
   cp -a ${tmpdir}/snowball/algorithms/${lang}/stem*.sbl ${tmpdir}/website/algorithms/${lang}/ || true
-  if [ -e ${tmpdir}/snowball/src_c/stem_${lang}.c ]
+  if [ -e ${tmpdir}/snowball/src_c/stem_ISO_8859_1_${lang}.c ]
   then
-    cp -a ${tmpdir}/snowball/src_c/stem_${lang}.c         ${tmpdir}/website/algorithms/${lang}/stem.c
-    cp -a ${tmpdir}/snowball/src_c/stem_${lang}.h         ${tmpdir}/website/algorithms/${lang}/stem.h
+    cp -a ${tmpdir}/snowball/src_c/stem_ISO_8859_1_${lang}.c         ${tmpdir}/website/algorithms/${lang}/stem.c
+    cp -a ${tmpdir}/snowball/src_c/stem_ISO_8859_1_${lang}.h         ${tmpdir}/website/algorithms/${lang}/stem.h
+  fi
+  if [ -e ${tmpdir}/snowball/src_c/stem_KOI8_R_${lang}.c ]
+  then
+    cp -a ${tmpdir}/snowball/src_c/stem_KOI8_R_${lang}.c         ${tmpdir}/website/algorithms/${lang}/stem.c
+    cp -a ${tmpdir}/snowball/src_c/stem_KOI8_R_${lang}.h         ${tmpdir}/website/algorithms/${lang}/stem.h
   fi
 done
 

@@ -26,6 +26,7 @@ trap "(echo \"bootstrap.sh failed\";
     echo "===STDOUT===";
     cat $logfile;
 } | $mailcmd; rm -rf $tmpdir)" EXIT
+#} | $mailcmd;)" EXIT
 
 svnbase="svn://snowball.tartarus.org/snowball/trunk/"
 
