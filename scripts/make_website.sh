@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh -ex
 # Must be called from a directory which the snowball module
 # has been checked out into.
 # Builds the website, placing all the generated files (such as
@@ -7,10 +7,24 @@
 # Directory to place the built website into.
 htmldir_local="/home/www/snowball.tartarus.org/"
 
+export PATH="$PATH:/usr/bin:/bin"
+
 omindex="/u1/james/install/bin/omindex"
 
+mailcmd="/usr/lib/sendmail -oem -t -oi"
+
 tmpdir="/tmp/snowball_mkwebsite$$"
-trap "(rm -rf $tmpdir;echo \"make_website.sh failed\")" EXIT
+#trap "(rm -rf $tmpdir;echo \"make_website.sh failed\";
+trap "(echo \"make_website.sh failed\";
+{
+    echo \"From: richard@tartarus.org\";
+    echo \"To: richard@tartarus.org\";
+    echo \"Subject: Snowball - make_website.sh failed\";
+    echo;
+    echo \"Date: `date`\";
+    echo;
+    /usr/bin/env;
+} | $mailcmd )" EXIT
 
 rm -rf ${tmpdir}
 mkdir -p ${tmpdir}
@@ -22,7 +36,7 @@ cp -a website ${tmpdir}
 find ${tmpdir} -name .svn | xargs rm -rf
 
 cd ${tmpdir}/snowball
-make all dist >/dev/null 2>/dev/null
+make all dist
 cd -
 
 cd snowball/algorithms
@@ -35,9 +49,12 @@ cp ${tmpdir}/snowball/stemwords /s1/snowball-svn/pub/compiled/
 # Build the website, excluding the data files.
 for lang in $langs
 do
-  cp -a ${tmpdir}/snowball/algorithms/${lang}/stem*.sbl ${tmpdir}/website/algorithms/${lang}/
-  cp -a ${tmpdir}/snowball/src_c/stem_${lang}.c         ${tmpdir}/website/algorithms/${lang}/stem.c
-  cp -a ${tmpdir}/snowball/src_c/stem_${lang}.h         ${tmpdir}/website/algorithms/${lang}/stem.h
+  cp -a ${tmpdir}/snowball/algorithms/${lang}/stem*.sbl ${tmpdir}/website/algorithms/${lang}/ || true
+  if [ -e ${tmpdir}/snowball/src_c/stem_${lang}.c ]
+  then
+    cp -a ${tmpdir}/snowball/src_c/stem_${lang}.c         ${tmpdir}/website/algorithms/${lang}/stem.c
+    cp -a ${tmpdir}/snowball/src_c/stem_${lang}.h         ${tmpdir}/website/algorithms/${lang}/stem.h
+  fi
 done
 
 # Build a tarball of the whole website, together with the code,
@@ -117,7 +134,7 @@ mkdir -p ${dbprefix}${db}-new;
 ${omindex} --db ${dbprefix}${db}-new \
         --url http://www.snowball.tartarus.org/archives/snowball-${db}/ \
         --mime-type txt:x-unhandled \
-        ${htmldir_local}/archives/snowball-${db}/ >/dev/null
+        ${htmldir_local}/archives/snowball-${db}/
 mv "${dbprefix}${db}" "${dbprefix}${db}-old" || /bin/true;
 mv "${dbprefix}${db}-new" "${dbprefix}${db}";
 rm -rf "${dbprefix}${db}-old";
@@ -127,7 +144,7 @@ mkdir -p ${dbprefix}${db}-new;
 ${omindex} --db ${dbprefix}${db}-new \
         --url http://www.snowball.tartarus.org/archives/snowball-${db}/ \
         --mime-type txt:x-unhandled \
-        ${htmldir_local}/archives/snowball-${db}/ >/dev/null
+        ${htmldir_local}/archives/snowball-${db}/
 mv "${dbprefix}${db}" "${dbprefix}${db}-old" || /bin/true;
 mv "${dbprefix}${db}-new" "${dbprefix}${db}";
 rm -rf "${dbprefix}${db}-old";
@@ -137,7 +154,7 @@ mkdir -p ${dbprefix}${db}-new;
 ${omindex} --db ${dbprefix}${db}-new \
         --url http://snowball.tartarus.org/ \
         --mime-type txt:x-unhandled \
-        /home/www/snowball.tartarus.org/ >/dev/null
+        /home/www/snowball.tartarus.org/
 mv "${dbprefix}${db}" "${dbprefix}${db}-old" || /bin/true;
 mv "${dbprefix}${db}-new" "${dbprefix}${db}";
 rm -rf "${dbprefix}${db}-old";
