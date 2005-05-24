@@ -5,21 +5,27 @@
 mailcmd="/usr/lib/sendmail -oem -t -oi"
 
 tmpdir="/tmp/snowball_bootstrap$$"
-logfile="${tmpdir}/log"
+logfile="${tmpdir}/stdout_log"
+errlogfile="${tmpdir}/stderr_log"
 
-#trap "(echo \"bootstrap.sh failed\";
-trap "(rm -rf $tmpdir;echo \"bootstrap.sh failed\";
+export PATH="$PATH:/usr/bin:/bin"
+
+trap "(echo \"bootstrap.sh failed\";
 {
     echo \"From: richard@tartarus.org\";
     echo \"To: richard@tartarus.org\";
     echo \"Subject: Snowball - bootstrap.sh failed\";
     echo;
-    echo \"Date: `date`\";
+    echo -n \"Date: \"; date;
     echo;
     /usr/bin/env;
     echo;
+    echo "===STDERR===";
+    cat $errlogfile;
+    echo;
+    echo "===STDOUT===";
     cat $logfile;
-} | $mailcmd )" EXIT
+} | $mailcmd; rm -rf $tmpdir)" EXIT
 
 svnbase="svn://snowball.tartarus.org/snowball/trunk/"
 
@@ -29,10 +35,10 @@ chmod go= ${tmpdir}
 chmod g+s ${tmpdir}
 
 cd ${tmpdir}
-svn export ${svnbase} >$logfile 2>&1
+svn export ${svnbase} >$logfile 2>$errlogfile
 cd trunk
 
-/s1/snowball-svn/snowball/hooks/make_website.sh >>$logfile 2>&1
+/s1/snowball-svn/snowball/hooks/make_website.sh >>$logfile 2>>$errlogfile
 
 trap EXIT
 rm -rf ${tmpdir}
