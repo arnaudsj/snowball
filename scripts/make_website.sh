@@ -14,8 +14,8 @@ omindex="/u1/james/install/bin/omindex"
 mailcmd="/usr/lib/sendmail -oem -t -oi"
 
 tmpdir="/tmp/snowball_mkwebsite$$"
-#trap "(rm -rf $tmpdir;echo \"make_website.sh failed\";
-trap "(echo \"make_website.sh failed\";
+#trap "(echo \"make_website.sh failed\";
+trap "(rm -rf $tmpdir;echo \"make_website.sh failed\";
 {
     echo \"From: richard@tartarus.org\";
     echo \"To: richard@tartarus.org\";

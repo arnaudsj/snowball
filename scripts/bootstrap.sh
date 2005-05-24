@@ -7,8 +7,8 @@ mailcmd="/usr/lib/sendmail -oem -t -oi"
 tmpdir="/tmp/snowball_bootstrap$$"
 logfile="${tmpdir}/log"
 
-#trap "(rm -rf $tmpdir;echo \"bootstrap.sh failed\";
-trap "(echo \"bootstrap.sh failed\";
+#trap "(echo \"bootstrap.sh failed\";
+trap "(rm -rf $tmpdir;echo \"bootstrap.sh failed\";
 {
     echo \"From: richard@tartarus.org\";
     echo \"To: richard@tartarus.org\";
