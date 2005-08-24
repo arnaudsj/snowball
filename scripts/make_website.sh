@@ -9,7 +9,7 @@ htmldir_local="/home/www/snowball.tartarus.org/"
 
 export PATH="$PATH:/usr/bin:/bin"
 
-omindex="/u1/james/install/bin/omindex"
+omindex="/u1/olly/install/bin/omindex"
 
 mailcmd="/usr/lib/sendmail -oem -t -oi"
 
