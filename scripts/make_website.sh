@@ -54,11 +54,18 @@ do
   then
     cp -a ${tmpdir}/snowball/src_c/stem_ISO_8859_1_${lang}.c         ${tmpdir}/website/algorithms/${lang}/stem.c
     cp -a ${tmpdir}/snowball/src_c/stem_ISO_8859_1_${lang}.h         ${tmpdir}/website/algorithms/${lang}/stem.h
-  fi
-  if [ -e ${tmpdir}/snowball/src_c/stem_KOI8_R_${lang}.c ]
-  then
-    cp -a ${tmpdir}/snowball/src_c/stem_KOI8_R_${lang}.c         ${tmpdir}/website/algorithms/${lang}/stem.c
-    cp -a ${tmpdir}/snowball/src_c/stem_KOI8_R_${lang}.h         ${tmpdir}/website/algorithms/${lang}/stem.h
+  else
+    if [ -e ${tmpdir}/snowball/src_c/stem_KOI8_R_${lang}.c ]
+    then
+      cp -a ${tmpdir}/snowball/src_c/stem_KOI8_R_${lang}.c         ${tmpdir}/website/algorithms/${lang}/stem.c
+      cp -a ${tmpdir}/snowball/src_c/stem_KOI8_R_${lang}.h         ${tmpdir}/website/algorithms/${lang}/stem.h
+    else
+      if [ -e ${tmpdir}/snowball/src_c/stem_UTF_8_${lang}.c ]
+      then
+        cp -a ${tmpdir}/snowball/src_c/stem_UTF_8_${lang}.c         ${tmpdir}/website/algorithms/${lang}/stem.c
+        cp -a ${tmpdir}/snowball/src_c/stem_UTF_8_${lang}.h         ${tmpdir}/website/algorithms/${lang}/stem.h
+      fi
+    fi
   fi
 done
 
