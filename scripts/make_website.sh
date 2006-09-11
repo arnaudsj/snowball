@@ -6,6 +6,10 @@
 
 # Directory to place the built website into.
 htmldir_local="/home/www/snowball.tartarus.org/"
+if [ x"$destdir" != x ]
+then
+  htmldir_local="$destdir"
+fi
 
 export PATH="$PATH:/usr/bin:/bin"
 
@@ -50,24 +54,26 @@ cp ${tmpdir}/snowball/stemwords /s1/snowball-svn/pub/compiled/
 for lang in $langs
 do
   cp -a ${tmpdir}/snowball/algorithms/${lang}/stem*.sbl ${tmpdir}/website/algorithms/${lang}/ || true
-  cp -a ${tmpdir}/snowball/algorithms/${lang}/stem*.c ${tmpdir}/website/algorithms/${lang}/ || true
-  cp -a ${tmpdir}/snowball/algorithms/${lang}/stem*.h ${tmpdir}/website/algorithms/${lang}/ || true
+  for genfile in ${tmpdir}/snowball/src_c/stem_*_${lang}.[ch]
+  do
+    cp -a ${genfile} ${tmpdir}/website/algorithms/${lang}/`basename ${genfile/_${lang}/}` || true
+  done
 
   # Copy one of the algorithms as stem.[ch], to preserve links.
   if [ -e ${tmpdir}/snowball/src_c/stem_ISO_8859_1_${lang}.c ]
   then
-    ln -s stem_ISO_8859_1_${lang}.c ${tmpdir}/website/algorithms/${lang}/stem.c
-    ln -s stem_ISO_8859_1_${lang}.h ${tmpdir}/website/algorithms/${lang}/stem.h
+    ln -s stem_ISO_8859_1.c ${tmpdir}/website/algorithms/${lang}/stem.c
+    ln -s stem_ISO_8859_1.h ${tmpdir}/website/algorithms/${lang}/stem.h
   else
     if [ -e ${tmpdir}/snowball/src_c/stem_KOI8_R_${lang}.c ]
     then
-      ln -s stem_KOI8_R_${lang}.c         ${tmpdir}/website/algorithms/${lang}/stem.c
-      ln -s stem_KOI8_R_${lang}.h         ${tmpdir}/website/algorithms/${lang}/stem.h
+      ln -s stem_KOI8_R.c         ${tmpdir}/website/algorithms/${lang}/stem.c
+      ln -s stem_KOI8_R.h         ${tmpdir}/website/algorithms/${lang}/stem.h
     else
       if [ -e ${tmpdir}/snowball/src_c/stem_UTF_8_${lang}.c ]
       then
-        ln -s stem_UTF_8_${lang}.c         ${tmpdir}/website/algorithms/${lang}/stem.c
-        ln -s stem_UTF_8_${lang}.h         ${tmpdir}/website/algorithms/${lang}/stem.h
+        ln -s stem_UTF_8.c         ${tmpdir}/website/algorithms/${lang}/stem.c
+        ln -s stem_UTF_8.h         ${tmpdir}/website/algorithms/${lang}/stem.h
       fi
     fi
   fi
