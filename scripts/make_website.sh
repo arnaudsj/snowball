@@ -50,20 +50,24 @@ cp ${tmpdir}/snowball/stemwords /s1/snowball-svn/pub/compiled/
 for lang in $langs
 do
   cp -a ${tmpdir}/snowball/algorithms/${lang}/stem*.sbl ${tmpdir}/website/algorithms/${lang}/ || true
+  cp -a ${tmpdir}/snowball/algorithms/${lang}/stem*.c ${tmpdir}/website/algorithms/${lang}/ || true
+  cp -a ${tmpdir}/snowball/algorithms/${lang}/stem*.h ${tmpdir}/website/algorithms/${lang}/ || true
+
+  # Copy one of the algorithms as stem.[ch], to preserve links.
   if [ -e ${tmpdir}/snowball/src_c/stem_ISO_8859_1_${lang}.c ]
   then
-    cp -a ${tmpdir}/snowball/src_c/stem_ISO_8859_1_${lang}.c         ${tmpdir}/website/algorithms/${lang}/stem.c
-    cp -a ${tmpdir}/snowball/src_c/stem_ISO_8859_1_${lang}.h         ${tmpdir}/website/algorithms/${lang}/stem.h
+    ln -s stem_ISO_8859_1_${lang}.c ${tmpdir}/website/algorithms/${lang}/stem.c
+    ln -s stem_ISO_8859_1_${lang}.h ${tmpdir}/website/algorithms/${lang}/stem.h
   else
     if [ -e ${tmpdir}/snowball/src_c/stem_KOI8_R_${lang}.c ]
     then
-      cp -a ${tmpdir}/snowball/src_c/stem_KOI8_R_${lang}.c         ${tmpdir}/website/algorithms/${lang}/stem.c
-      cp -a ${tmpdir}/snowball/src_c/stem_KOI8_R_${lang}.h         ${tmpdir}/website/algorithms/${lang}/stem.h
+      ln -s stem_KOI8_R_${lang}.c         ${tmpdir}/website/algorithms/${lang}/stem.c
+      ln -s stem_KOI8_R_${lang}.h         ${tmpdir}/website/algorithms/${lang}/stem.h
     else
       if [ -e ${tmpdir}/snowball/src_c/stem_UTF_8_${lang}.c ]
       then
-        cp -a ${tmpdir}/snowball/src_c/stem_UTF_8_${lang}.c         ${tmpdir}/website/algorithms/${lang}/stem.c
-        cp -a ${tmpdir}/snowball/src_c/stem_UTF_8_${lang}.h         ${tmpdir}/website/algorithms/${lang}/stem.h
+        ln -s stem_UTF_8_${lang}.c         ${tmpdir}/website/algorithms/${lang}/stem.c
+        ln -s stem_UTF_8_${lang}.h         ${tmpdir}/website/algorithms/${lang}/stem.h
       fi
     fi
   fi
@@ -101,9 +105,9 @@ do
   if [ -e ${lang}/voc.txt ]
   then
     tar zcf ${lang}/tarball.tgz \
-      ${lang}/stem.sbl \
-      ${lang}/stem.c \
-      ${lang}/stem.h \
+      ${lang}/stem*.sbl \
+      ${lang}/stem*.c \
+      ${lang}/stem*.h \
       ${lang}/voc.txt \
       ${lang}/output.txt \
       ${lang}/stemmer.html
