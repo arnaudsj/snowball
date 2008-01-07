@@ -39,7 +39,7 @@ cd ${tmpdir}
 svn export ${svnbase} >$logfile 2>$errlogfile
 cd trunk
 
-/s1/snowball-svn/snowball/hooks/make_website.sh >>$logfile 2>>$errlogfile
+/home/snowball-svn/snowball/hooks/make_website.sh >>$logfile 2>>$errlogfile
 
 trap EXIT
 rm -rf ${tmpdir}

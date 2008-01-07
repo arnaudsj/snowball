@@ -1,11 +1,11 @@
-#!/bin/sh -ex
+#!/bin/bash -ex
 # Must be called from a directory which the snowball module
 # has been checked out into.
 # Builds the website, placing all the generated files (such as
 # tarballs and generated code files) in the appropriate places.
 
 # Directory to place the built website into.
-htmldir_local="/home/www/snowball.tartarus.org/"
+htmldir_local="/srv/www/snowball.tartarus.org/"
 if [ x"$destdir" != x ]
 then
   htmldir_local="$destdir"
@@ -18,8 +18,8 @@ omindex="/u1/olly/install/bin/omindex"
 mailcmd="/usr/lib/sendmail -oem -t -oi"
 
 tmpdir="/tmp/snowball_mkwebsite$$"
-#trap "(echo \"make_website.sh failed\";
 trap "(rm -rf $tmpdir;echo \"make_website.sh failed\";
+#trap "(echo \"make_website.sh failed\";
 {
     echo \"From: richard@tartarus.org\";
     echo \"To: richard@tartarus.org\";
@@ -48,7 +48,7 @@ langs=`find * -type d -maxdepth 0 -not -name .svn`
 cd -
 
 # Get the compiled stemmer, for use by the demo.
-cp ${tmpdir}/snowball/stemwords /s1/snowball-svn/pub/compiled/
+cp ${tmpdir}/snowball/stemwords /home/snowball-svn/pub/compiled/
 
 # Build the website, excluding the data files.
 for lang in $langs
@@ -128,21 +128,22 @@ mv ${tmpdir}/snowball/dist/snowball_code.tgz ${tmpdir}/website/dist/
 mv ${tmpdir}/snowball/dist/libstemmer_c.tgz ${tmpdir}/website/dist/
 mv ${tmpdir}/snowball/dist/libstemmer_java.tgz ${tmpdir}/website/dist/
 
-# Add link to viewcvs wrapper.
-rm -f ${tmpdir}/website/viewcvs.cgi
-ln -s /s1/anonsvn/pub/viewcvs-userv-wrapper ${tmpdir}/website/viewcvs.cgi
-
 # Update mail archives
 cd ~/archives
 mkdir -p archives
-HM_LINKQUOTES=1 HM_REVERSE=1 HM_MONTHLY_INDEX=1 /home/richard/pub/builds/hypermail -m /usr/data/mailman/archives/private/snowball-discuss.mbox/snowball-discuss.mbox -d archives/snowball-discuss -l "Snowball Discuss"
-HM_LINKQUOTES=1 HM_REVERSE=1 HM_MONTHLY_INDEX=1 /home/richard/pub/builds/hypermail -m /usr/data/mailman/archives/private/snowball-commits.mbox/snowball-commits.mbox -d archives/snowball-commits -l "Snowball Commits"
+#HM_LINKQUOTES=1 HM_REVERSE=1 HM_MONTHLY_INDEX=1 /home/richard/pub/builds/hypermail -m /usr/data/mailman/archives/private/snowball-discuss.mbox/snowball-discuss.mbox -d archives/snowball-discuss -l "Snowball Discuss"
+#HM_LINKQUOTES=1 HM_REVERSE=1 HM_MONTHLY_INDEX=1 /home/richard/pub/builds/hypermail -m /usr/data/mailman/archives/private/snowball-commits.mbox/snowball-commits.mbox -d archives/snowball-commits -l "Snowball Commits"
 cp -r archives/* ${tmpdir}/website/archives
 cd -
 
-cp -a /s1/snowball-svn/pub/compiled/omega.cgi ${tmpdir}/website/omega.cgi
+cp -a /home/snowball-svn/pub/compiled/omega.cgi ${tmpdir}/website/omega.cgi
 
 rsync -q -a -r --delete --delete-after ${tmpdir}/website/ ${htmldir_local}
+
+# Stop here - don't update search indexes now.
+trap EXIT
+rm -rf ${tmpdir}
+exit 0
 
 # Update search indices
 dbprefix="/home/richard/pub/omega/data/snowball-";
@@ -176,7 +177,7 @@ mkdir -p ${dbprefix}${db}-new;
 ${omindex} --db ${dbprefix}${db}-new \
         --url http://snowball.tartarus.org/ \
         --mime-type txt:x-unhandled \
-        /home/www/snowball.tartarus.org/
+        /srv/www/snowball.tartarus.org/
 mv "${dbprefix}${db}" "${dbprefix}${db}-old" || /bin/true;
 mv "${dbprefix}${db}-new" "${dbprefix}${db}";
 rm -rf "${dbprefix}${db}-old";
