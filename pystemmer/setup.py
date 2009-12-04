@@ -18,7 +18,7 @@ library_core_dirs = ('src_c', 'runtime', 'libstemmer', 'include')
 
 # Read the manifest of files in libstemmer.
 src_files = [os.path.join(library_dir, line.strip().replace(' \\', ''))
-             for line in open(os.path.join(library_dir, 'mkinc_utf8.mak'))
+             for line in open(os.path.join(library_dir, 'libstemmer', 'mkinc_utf8.mak'))
              if len(line.strip()) > 2
              and (line.strip().endswith('.c \\') or line.strip().endswith('.c'))
              and os.path.split(line.strip())[0] in library_core_dirs]
